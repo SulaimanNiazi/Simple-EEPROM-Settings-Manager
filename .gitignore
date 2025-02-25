@@ -1,0 +1,23 @@
+# Directories
+
+_build/*
+.vscode/*
+cmake/*
+build/*
+nbproject/*
+dist/default/debug/*
+dist/default/production
+Proteus Simulation/*
+
+
+# Files
+
+*.code-workspace
+**/[Tt]est.*
+
+# Exceptions
+
+!Proteus Simulation/*.pdsprj
+!Proteus Simulation/*.mp4
+!**/*.cof
+!**/*.hex
