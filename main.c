@@ -40,6 +40,7 @@ uint16_t getInput(){
 uint16_t setValue(){
     uint16_t value = 0;
     while(1){
+        PORTD = value;
         switch(getInput()){
             case 0:
                 return value; 
@@ -70,7 +71,8 @@ void main(){
     initializeSetting(&brightness, 0x0001);
     initializeSetting(&volume, 0x0002);
     bool writeError = false;
-    TRISB = 0xFF;
+    TRISD = 0x00;
+    PORTD = 0x00;
     while(1){
         if(getInput() == 0){
             uint16_t choice = setValue();
@@ -78,12 +80,15 @@ void main(){
             switch(choice){
                 case 0:
                     writeError = writeSetting(&mode, newValue);
+                    PORTD = readSetting(&mode);
                     break;
                 case 1:
                     writeError = writeSetting(&brightness, newValue);
+                    PORTD = readSetting(&brightness);
                     break;
                 case 2:
                     writeError = writeSetting(&volume, newValue);
+                    PORTD = readSetting(&volume);
                     break;
             }
         }
