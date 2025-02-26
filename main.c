@@ -8,8 +8,8 @@
 #define _XTAL_FREQ 20000000
 #include <xc.h>
 #include <stdbool.h>
-#include "./eeprom.h"
-#include "./settings.h"
+#include "./src/eeprom.h"
+#include "./src/settings.h"
 
 uint16_t getInput(){
     while(1){
