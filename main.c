@@ -71,11 +71,15 @@ void main(){
     initializeSetting(&brightness, 0x0001);
     initializeSetting(&volume, 0x0002);
     bool writeError = false;
-    TRISD = 0x00;
-    PORTD = 0x00;
+    TRISD = PORTD = 0x00;
+    TRISC0 = TRISC1 = 0;
     while(1){
+        RC0 = RC1 = 0;
         if(getInput() == 0){
+            RC0 = 1;
             uint16_t choice = setValue();
+            RC0 = 0;
+            RC1 = 1;
             uint16_t newValue = setValue();
             switch(choice){
                 case 0:
