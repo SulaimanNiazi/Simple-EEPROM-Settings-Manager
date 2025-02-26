@@ -37,8 +37,8 @@ uint16_t getInput(){
     }
 }
 
-uint16_t setValue(){
-    uint16_t value = 0;
+uint16_t setValue(uint16_t oldValue, uint16_t maxValue){
+    uint16_t value = oldValue;
     while(1){
         PORTD = value;
         switch(getInput()){
@@ -46,7 +46,7 @@ uint16_t setValue(){
                 return value; 
                 break;
             case 1:
-                if(value==2){
+                if(value == maxValue){
                     value = 0;
                 }
                 else{
@@ -55,7 +55,7 @@ uint16_t setValue(){
                 break;
             case 2:
                 if(value == 0){
-                    value = 2;
+                    value = maxValue;
                 }
                 else{
                     value--;
@@ -74,27 +74,28 @@ void main(){
     TRISD = PORTD = 0x00;
     TRISC0 = TRISC1 = 0;
     while(1){
-        RC0 = RC1 = 0;
+        RC0 = RC1 = 0;          //Mode 0: Normal
         if(getInput() == 0){
-            RC0 = 1;
-            uint16_t choice = setValue();
-            RC0 = 0;
+            RC0 = 1;            //Mode 1: Select setting to edit
+            uint16_t choice = setValue(0,2);
+            RC0 = 0;            //Mode 2: Select new value
             RC1 = 1;
-            uint16_t newValue = setValue();
+            uint16_t newValue;
+            Setting *selectedSetting;
             switch(choice){
                 case 0:
-                    writeError = writeSetting(&mode, newValue);
-                    PORTD = readSetting(&mode);
+                    selectedSetting = &mode;
                     break;
                 case 1:
-                    writeError = writeSetting(&brightness, newValue);
-                    PORTD = readSetting(&brightness);
+                    selectedSetting = &brightness;
                     break;
                 case 2:
-                    writeError = writeSetting(&volume, newValue);
-                    PORTD = readSetting(&volume);
+                    selectedSetting = &volume;
                     break;
             }
+            newValue = setValue(readSetting(selectedSetting), 255);
+            writeError = writeSetting(selectedSetting, newValue);
+            PORTD = readSetting(selectedSetting);
         }
     }
     return;
