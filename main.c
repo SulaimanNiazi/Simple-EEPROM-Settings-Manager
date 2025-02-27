@@ -67,13 +67,14 @@ uint16_t setValue(uint16_t oldValue, uint16_t maxValue){
 
 void main(){
     Setting mode, brightness, volume;
-    initializeSetting(&mode, 0x0000);
-    initializeSetting(&brightness, 0x0001);
-    initializeSetting(&volume, 0x0002);
+    initializeSetting(&mode, 0x0001);
+    initializeSetting(&brightness, 0x0003);
+    initializeSetting(&volume, 0x0005);
     bool writeError = false;
-    TRISD = PORTD = 0x00;
+    TRISD = 0x00;
     TRISC0 = TRISC1 = 0;
     while(1){
+        PORTD = 0x00;
         RC0 = RC1 = 0;          //Mode 0: Normal
         if(getInput() == 0){
             RC0 = 1;            //Mode 1: Select setting to edit
@@ -93,7 +94,7 @@ void main(){
                     selectedSetting = &volume;
                     break;
             }
-            newValue = setValue(readSetting(selectedSetting), 255);
+            newValue = setValue(selectedSetting->data, 255);
             writeError = writeSetting(selectedSetting, newValue);
             PORTD = readSetting(selectedSetting);
         }
