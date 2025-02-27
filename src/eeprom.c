@@ -1,5 +1,4 @@
 #include <xc.h>
-#include <pic16f877a.h>
 #include "eeprom.h"
 
 void divideInto(uint16_t value, uint8_t *addressH, uint8_t *addressL){

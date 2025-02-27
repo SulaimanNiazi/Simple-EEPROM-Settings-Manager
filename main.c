@@ -5,6 +5,19 @@
  * Created on February 26, 2025, 1:19 AM
  */
 
+#define displayPort             PORTD
+#define displayPortDIR          TRISD
+#define change_select_pin       PORTBbits.RB0
+#define change_select_pinDIR    TRISBbits.TRISB0
+#define increment_pin           PORTBbits.RB1
+#define increment_pinDIR        TRISBbits.TRISB1
+#define decrement_pin           PORTBbits.RB2
+#define decrement_pinDIR        TRISBbits.TRISB2
+#define indicator_pin1          PORTCbits.RC0
+#define indicator_pin1DIR       TRISCbits.TRISC0
+#define indicator_pin2          PORTCbits.RC1
+#define indicator_pin2DIR       TRISCbits.TRISC1
+
 #define _XTAL_FREQ 20000000
 #include <xc.h>
 #include <stdbool.h>
@@ -13,24 +26,24 @@
 
 uint16_t getInput(){
     while(1){
-        if(RB0){            //change/select setting
+        if(change_select_pin){            //change/select setting
             __delay_ms(10);
-            if(RB0){
-                while(RB0);
+            if(change_select_pin){
+                while(change_select_pin);
                 return 0;
             }
         }
-        if(RB1){            //increment
+        if(increment_pin){            //increment
             __delay_ms(10);
-            if(RB1){
-                while(RB1);
+            if(increment_pin){
+                while(increment_pin);
                 return 1;
             }
         }
-        if(RB2){            //decrement
+        if(decrement_pin){            //decrement
             __delay_ms(10);
-            if(RB2){
-                while(RB2);
+            if(decrement_pin){
+                while(decrement_pin);
                 return 2;
             }
         }
@@ -40,7 +53,7 @@ uint16_t getInput(){
 uint16_t setValue(uint16_t oldValue, uint16_t maxValue){
     uint16_t value = oldValue;
     while(1){
-        PORTD = value;
+        displayPort = value;
         switch(getInput()){
             case 0:
                 return value; 
@@ -71,16 +84,17 @@ void main(){
     initializeSetting(&brightness, 0x0003);
     initializeSetting(&volume, 0x0005);
     bool writeError = false;
-    TRISD = 0x00;
-    TRISC0 = TRISC1 = 0;
+    displayPortDIR = 0x00;
+    indicator_pin1DIR = indicator_pin2DIR = 0;
+    change_select_pinDIR = increment_pinDIR = decrement_pinDIR = 1;
     while(1){
-        PORTD = 0x00;
-        RC0 = RC1 = 0;          //Mode 0: Normal
+        displayPort = 0x00;
+        indicator_pin1 = indicator_pin2 = 0;          //Mode 0: Normal
         if(getInput() == 0){
-            RC0 = 1;            //Mode 1: Select setting to edit
+            indicator_pin1 = 1;            //Mode 1: Select setting to edit
             uint16_t choice = setValue(0,2);
-            RC0 = 0;            //Mode 2: Select new value
-            RC1 = 1;
+            indicator_pin1 = 0;            //Mode 2: Select new value
+            indicator_pin2 = 1;
             uint16_t newValue;
             Setting *selectedSetting;
             switch(choice){
@@ -96,7 +110,7 @@ void main(){
             }
             newValue = setValue(selectedSetting->data, 255);
             writeError = writeSetting(selectedSetting, newValue);
-            PORTD = readSetting(selectedSetting);
+            displayPort = readSetting(selectedSetting);
         }
     }
     return;
