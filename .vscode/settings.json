@@ -1,0 +1,9 @@
+{
+    "mplab.clangd.arguments": [
+        "--compile-commands-dir=${workspaceRoot}\\_build\\Simple EEPROM settings manager\\default"
+    ],
+    "mplab.clangd.path": "c:\\Program Files\\Microchip\\xc8\\v3.00\\bin\\xc8-clangd.exe",
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "mplab.project.workspace.removeDeletedSourceFiles": "Always",
+    "mplab.project.workspace.addNewSourceFiles": "Always"
+}

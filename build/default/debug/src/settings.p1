@@ -1,0 +1,69 @@
+Version 4.0 HI-TECH Software Intermediate Code
+"7 src/settings.h
+[; ;src/settings.h: 7: typedef struct {
+[s S1 `us 1 `us 1 ]
+[n S1 . address data ]
+"8 src/eeprom.h
+[; ;src/eeprom.h: 8: uint16_t readEEPROM(uint16_t address);
+[v _readEEPROM `(us ~T0 @X0 0 ef1`us ]
+"7
+[; ;src/eeprom.h: 7: void writeEEPROM(uint16_t address, uint16_t data);
+[v _writeEEPROM `(v ~T0 @X0 0 ef2`us`us ]
+"5 src/settings.c
+[; ;src/settings.c: 5: Setting userSettings;
+[v _userSettings `S1 ~T0 @X0 1 e ]
+"7
+[; ;src/settings.c: 7: void initializeSetting(Setting*config, uint16_t address) {
+[v _initializeSetting `(v ~T0 @X0 1 ef2`*S1`us ]
+{
+[e :U _initializeSetting ]
+[v _config `*S1 ~T0 @X0 1 r1 ]
+[v _address `us ~T0 @X0 1 r2 ]
+[f ]
+"8
+[; ;src/settings.c: 8:     config->address = address;
+[e = . *U _config 0 _address ]
+"9
+[; ;src/settings.c: 9:     config->data = readEEPROM(address);
+[e = . *U _config 1 ( _readEEPROM (1 _address ]
+"10
+[; ;src/settings.c: 10: }
+[e :UE 2 ]
+}
+"12
+[; ;src/settings.c: 12: uint16_t readSetting(Setting *config) {
+[v _readSetting `(us ~T0 @X0 1 ef1`*S1 ]
+{
+[e :U _readSetting ]
+[v _config `*S1 ~T0 @X0 1 r1 ]
+[f ]
+"13
+[; ;src/settings.c: 13:     return config->data;
+[e ) . *U _config 1 ]
+[e $UE 3  ]
+"14
+[; ;src/settings.c: 14: }
+[e :UE 3 ]
+}
+"16
+[; ;src/settings.c: 16: _Bool writeSetting(Setting *config, uint16_t data) {
+[v _writeSetting `(a ~T0 @X0 1 ef2`*S1`us ]
+{
+[e :U _writeSetting ]
+[v _config `*S1 ~T0 @X0 1 r1 ]
+[v _data `us ~T0 @X0 1 r2 ]
+[f ]
+"17
+[; ;src/settings.c: 17:     writeEEPROM(config->address, data);
+[e ( _writeEEPROM (2 , . *U _config 0 _data ]
+"18
+[; ;src/settings.c: 18:     config->data = readEEPROM(config->address);
+[e = . *U _config 1 ( _readEEPROM (1 . *U _config 0 ]
+"19
+[; ;src/settings.c: 19:     return config->data == data;
+[e ) -> -> == -> . *U _config 1 `ui -> _data `ui `i `a ]
+[e $UE 4  ]
+"20
+[; ;src/settings.c: 20: }
+[e :UE 4 ]
+}
